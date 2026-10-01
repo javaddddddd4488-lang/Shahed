@@ -9,4 +9,4 @@ ADMIN_IDS = ""
 
 [[kv_namespaces]]
 binding = "SHAHED_KV"
-id = "REPLACE_WITH_YOUR_KV_NAMESPACE_ID"
+id = "dd5f785e7d194a0ab23adfa3cea11abb"
