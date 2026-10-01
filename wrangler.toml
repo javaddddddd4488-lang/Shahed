@@ -1,0 +1,12 @@
+name = "shahed-telegram-bot"
+main = "src/index.js"
+compatibility_date = "2026-10-01"
+
+[vars]
+# Put Telegram user IDs here, separated by commas.
+# Example: ADMIN_IDS = "123456789,987654321"
+ADMIN_IDS = ""
+
+[[kv_namespaces]]
+binding = "SHAHED_KV"
+id = "REPLACE_WITH_YOUR_KV_NAMESPACE_ID"
