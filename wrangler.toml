@@ -1,0 +1,14 @@
+name = "shahed-telegram-bot"
+main = "src/index.js"
+compatibility_date = "2026-10-01"
+
+[vars]
+ADMIN_IDS = ""
+ARCHIVE_CHANNEL_ID = ""
+
+[[kv_namespaces]]
+binding = "SHAHED_KV"
+id = "REPLACE_WITH_YOUR_KV_NAMESPACE_ID"
+
+[secrets]
+required = ["BOT_TOKEN", "WEBHOOK_SECRET"]
