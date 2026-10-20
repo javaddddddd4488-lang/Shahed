@@ -1,4 +1,4 @@
-name = "shahed-telegram-bot"
+name = "shahed"
 main = "src/index.js"
 compatibility_date = "2026-10-01"
 
@@ -8,7 +8,7 @@ ARCHIVE_CHANNEL_ID = ""
 
 [[kv_namespaces]]
 binding = "SHAHED_KV"
-id = "REPLACE_WITH_YOUR_KV_NAMESPACE_ID"
+id = "25b427b095314bc0b2fa249cf4565090"
 
 [secrets]
 required = ["BOT_TOKEN", "WEBHOOK_SECRET"]
