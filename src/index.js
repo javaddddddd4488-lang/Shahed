@@ -119,21 +119,52 @@ async function handleUpdate(update, env) {
   }
 
   // Filter checks: process ordinary group messages (including captions).
-  // Exempt bot admins from auto-filtering so they can manage the group.
+  
+  // بررسی فیلتر کلمات با امکان معافیت کاربران
   if (!admin && !msg.from.is_bot && text) {
-    const filters = await env.SHAHED_KV.get(`filters:${chat.id}`, "json") || [];
-    const matched = filters.find(word => text.toLocaleLowerCase().includes(word.toLocaleLowerCase()));
-    if (matched) {
-      const deleted = await tg(env, "deleteMessage", {
-        chat_id: chat.id,
-        message_id: msg.message_id
-      });
-      if (!deleted.ok) {
-        // Intentionally do not log message-related moderation details.
+    const exemptUsers =
+      (await env.SHAHED_KV.get(
+        `filter_exempt:${chat.id}`,
+        "json"
+      )) || [];
+
+    const isExempt = exemptUsers.includes(
+      String(msg.from.id)
+    );
+
+    if (!isExempt) {
+      const filters =
+        (await env.SHAHED_KV.get(
+          `filters:${chat.id}`,
+          "json"
+        )) || [];
+
+      const normalizedText = text.toLocaleLowerCase();
+
+      const matched = filters.find(word =>
+        normalizedText.includes(
+          word.toLocaleLowerCase()
+        )
+      );
+
+      if (matched) {
+        const deleted = await tg(env, "deleteMessage", {
+          chat_id: chat.id,
+          message_id: msg.message_id
+        });
+
+        if (!deleted.ok) return;
+
+        await addWarning(
+          env,
+          chat.id,
+          msg.from.id,
+          msg.from,
+          `پیام به‌دلیل استفاده از کلمه فیلترشده «${matched}» حذف شد.`
+        );
+
         return;
       }
-      await addWarning(env, chat.id, msg.from.id, msg.from, `پیام به‌دلیل استفاده از کلمه فیلترشده «${matched}» حذف شد.`);
-      return;
     }
   }
 
