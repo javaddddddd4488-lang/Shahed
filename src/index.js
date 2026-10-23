@@ -193,6 +193,87 @@ async function handleGM(msg, env) {
     return sendMessage(env, chatId, `✅ فیلتر «${word}» لغو شد.`);
   }
 
+    // معاف کردن کاربر از فیلتر کلمات
+  if (args[1] === "کاربر" && args[2] === "آزاد") {
+    if (!target || !target.id) {
+      return sendMessage(
+        env,
+        chatId,
+        "❌ این دستور را با Reply روی پیام عضو موردنظر بفرست."
+      );
+    }
+
+    const key = `filter_exempt:${chatId}`;
+    const exemptUsers =
+      (await env.SHAHED_KV.get(key, "json")) || [];
+
+    const targetId = String(target.id);
+
+    if (exemptUsers.includes(targetId)) {
+      return sendMessage(
+        env,
+        chatId,
+        "ℹ️ این عضو از قبل از فیلتر کلمات معاف است."
+      );
+    }
+
+    exemptUsers.push(targetId);
+
+    await env.SHAHED_KV.put(
+      key,
+      JSON.stringify(exemptUsers)
+    );
+
+    return sendMessage(
+      env,
+      chatId,
+      "✅ این عضو از فیلتر کلمات معاف شد."
+    );
+  }
+
+  // بازگرداندن کاربر به وضعیت عادی فیلتر
+  if (args[1] === "کاربر" && args[2] === "محدود") {
+    if (!target || !target.id) {
+      return sendMessage(
+        env,
+        chatId,
+        "❌ این دستور را با Reply روی پیام عضو موردنظر بفرست."
+      );
+    }
+
+    const key = `filter_exempt:${chatId}`;
+    const exemptUsers =
+      (await env.SHAHED_KV.get(key, "json")) || [];
+
+    const targetId = String(target.id);
+
+    if (!exemptUsers.includes(targetId)) {
+      return sendMessage(
+        env,
+        chatId,
+        "ℹ️ این عضو از قبل در وضعیت عادی فیلتر است."
+      );
+    }
+
+    const remainingUsers = exemptUsers.filter(
+      id => id !== targetId
+    );
+
+    if (remainingUsers.length > 0) {
+      await env.SHAHED_KV.put(
+        key,
+        JSON.stringify(remainingUsers)
+      );
+    } else {
+      await env.SHAHED_KV.delete(key);
+    }
+
+    return sendMessage(
+      env,
+      chatId,
+      "✅ معافیت این عضو لغو شد و فیلتر کلمات دوباره برای او فعال است."
+    );
+  }
   if (args[1] === "قفل" && args[2] === "گروه") {
     return lockGroup(msg, env);
   }
